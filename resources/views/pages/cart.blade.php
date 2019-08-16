@@ -16,6 +16,7 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="cart-table-container">
+                        @if($products->count()>0)
                         <table class="table table-cart">
                             <thead>
                                 <tr>
@@ -26,6 +27,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                
                                 @foreach ($products as $product)
                                 <tr class="product-row">
                                         <td class="product-col">
@@ -40,7 +42,11 @@
                                         </td>
                                         <td>{{$product->pivot->price}}</td>
                                         <td>
-                                        <input class="vertical-quantity form-control" type="number" value={{$product->pivot->quatity}}>
+                                        <form action="/cart/{{$product->pivot->id}}/update" method="post">
+                                            @csrf
+                                            <input class="vertical-quantity form-control" type="number" name="quantity" value={{$product->pivot->quatity}}>
+                                            <button type="submit"> submit </button>
+                                        </form>
                                         </td>
                                         <td>{{$product->pivot->total_price}}</td>
                                     </tr>
@@ -63,26 +69,46 @@
                                         </td>
                                     </tr>
                                 @endforeach
-                                
                             </tbody>
 
                             <tfoot>
                                 <tr>
                                     <td colspan="4" class="clearfix">
                                         <div class="float-left">
-                                            <a href="category.html" class="btn btn-outline-secondary">Continue Shopping</a>
+                                            <a href="/shop" class="btn btn-outline-secondary">Continue Shopping</a>
                                         </div><!-- End .float-left -->
 
                                         <div class="float-right">
-                                            <a href="#" class="btn btn-outline-secondary btn-clear-cart">Clear Shopping Cart</a>
-                                            <a href="#" class="btn btn-outline-secondary btn-update-cart">Update Shopping Cart</a>
+                                            <form action="/cart" method="post">
+                                                @method('DELETE')
+                                                @csrf
+                                                <button class="btn btn-outline-secondary btn-clear-cart" type="submit">
+                                                    <span>Clear Shopping Cart</span>
+                                                </button>
+                                            </form>
                                         </div><!-- End .float-right -->
                                     </td>
                                 </tr>
                             </tfoot>
                         </table>
-                    </div><!-- End .cart-table-container -->
+                        @else
+                            <table>
+                            <h4>Your Cart is Empty</h4>
 
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="clearfix">
+                                        <div class="float-left">
+                                            <a href="/shop" class="btn btn-outline-secondary">Continue Shopping</a>
+                                        </div><!-- End .float-left -->
+                                    </td>
+                                </tr>
+                            </tfoot>
+
+                            </table>
+                        @endif
+                    </div><!-- End .cart-table-container -->
+                    
                     <div class="cart-discount">
                         <h4>Apply Discount Code</h4>
                         <form action="#">

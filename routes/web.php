@@ -31,7 +31,9 @@ Route::middleware(['auth'])->group(function(){
     Route::delete('/wishlist/{product}/delete', 'WishListController@destroy');
 
     Route::get('/cart', 'CartController@index')->name('cart.index');
-    Route::post('/cart/{product}/add', 'CartController@store')->name('cart.add');
+    Route::post('/cart/{id}/add', 'CartController@store')->name('cart.add');
     Route::delete('/cart/{product}/delete', 'CartController@destroy')->name('cart.delete');
+    Route::post('/cart/{product}/update', 'CartController@update')->name('cart.update');
+    Route::delete('/cart', 'CartController@clearCart')->name('cart.clear');
 
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -22,7 +23,7 @@ class CartController extends Controller
         //$totalPrices=$products->pivot->total_price::with($products);
         return view('pages.cart')->with([
             'products' => $products,
-                
+ 
             ]);
     }
 
@@ -93,7 +94,18 @@ class CartController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $now = Carbon::now()->toDateTimeString();
+        $price = DB::table('carts')->find($id)->price;
+        $quantity = $request->input('quantity');
+        $subtotal = $quantity*$price;
+        DB::table('carts')
+            ->where('id', $id)
+            ->update([
+            'quatity' => $quantity,
+            'total_price' => $subtotal,
+            'updated_at' => $now
+        ]);
+        return redirect()->back()->with('success', 'Updated');
     }
 
     /**
@@ -107,5 +119,11 @@ class CartController extends Controller
         $user_id=Auth::user()->id;
         $product=User::find($user_id)->cartProducts()->detach($id);
         return redirect()->back()->with('success', 'Removed from cart');
+    }
+
+    public function clearCart(){
+        $user_id=Auth::user()->id;
+        $products=User::find($user_id)->cartProducts()->detach();
+        return redirect()->back()->with('success', 'All Removed from cart');
     }
 }

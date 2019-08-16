@@ -55,7 +55,7 @@ class User extends Authenticatable
     //cart relation
     public function cartProducts(){
         return $this->belongsToMany('App\Product','carts','user_id','product_id')
-                    ->withPivot('price', 'total_price', 'quatity', 'created_at', 'updated_at');;
+                    ->withPivot('id','price', 'total_price', 'quatity', 'created_at', 'updated_at');;
      }
 
     
