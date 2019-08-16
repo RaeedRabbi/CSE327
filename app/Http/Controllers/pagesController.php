@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class pagesController extends Controller
+class PagesController extends Controller
 {
     public function index()
     {
-        return view('porto ecommerce.portotheme.html.porto_ecommerce.demo-9.index');
+        return view('pages.index');
     }
+   
     public function about()
     {
         return view('porto ecommerce.portotheme.html.porto_ecommerce.demo-9.about');

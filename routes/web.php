@@ -11,7 +11,27 @@
 |
 */
 
-Route::get('/', 'pagesController@index');
-Route::get('/about', 'pagesController@about');
-Route::get('/contact', 'pagesController@contact');
-Route::get('/blog', 'pagesController@blog');
+Route::get('/', 'PagesController@index');
+Route::get('/about', 'PagesController@about');
+Route::get('/contact', 'PagesController@contact');
+Route::get('/blog', 'PagesController@blog');
+
+Route::get('/shop', 'ShopController@index');
+Route::get('/shop/{product}', 'ShopController@show');
+
+//Route::resource('wishList', 'WishListController')->only('index');
+Auth::routes();
+Route::get('/dashboard', 'DashboardController@index');
+
+Route::middleware(['auth'])->group(function(){
+    Route::post('/shop/{product}/review', 'ShopController@storeReview');
+
+    Route::get('/wishlist', 'WishListController@index');
+    Route::get('/wishlist/{product}/store', 'WishListController@store');
+    Route::delete('/wishlist/{product}/delete', 'WishListController@destroy');
+
+    Route::get('/cart', 'CartController@index')->name('cart.index');
+    Route::post('/cart/{product}/add', 'CartController@store')->name('cart.add');
+    Route::delete('/cart/{product}/delete', 'CartController@destroy')->name('cart.delete');
+
+});

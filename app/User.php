@@ -41,4 +41,22 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    //review relation
+    public function reviews(){
+        return $this->hasMany('App\Review');
+    }
+
+    //wishlist relation
+    public function products(){
+        return $this->belongsToMany('App\Product','wish_lists','user_id','product_id');
+    }
+
+    //cart relation
+    public function cartProducts(){
+        return $this->belongsToMany('App\Product','carts','user_id','product_id')
+                    ->withPivot('price', 'total_price', 'quatity', 'created_at', 'updated_at');;
+     }
+
+    
 }

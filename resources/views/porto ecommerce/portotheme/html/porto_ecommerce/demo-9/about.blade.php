@@ -14,13 +14,13 @@
     <meta name="author" content="SW-THEMES">
         
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="assets/images/icons/favicon.ico">
+    <link rel="icon" type="image/x-icon" href={{asset('images/icons/favicon.ico')}}>
     
     <!-- Plugins CSS File -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href={{asset('css/bootstrap.min.css')}}>
 
     <!-- Main CSS File -->
-    <link rel="stylesheet" href="assets/css/style.min.css">
+    <link rel="stylesheet" href={{asset('css/style.min.css')}}>
 </head>
 <body>
     <div class="page-wrapper">
@@ -39,11 +39,11 @@
                         </div><!-- End .header-dropown -->
 
                         <div class="header-dropdown">
-                            <a href="#"><img src="assets/images/flags/en.png" alt="England flag">ENGLISH</a>
+                            <a href="#"><img src={{asset('images/flags/en.png')}} alt="England flag">ENGLISH</a>
                             <div class="header-menu">
                                 <ul>
-                                    <li><a href="#"><img src="assets/images/flags/en.png" alt="England flag">ENGLISH</a></li>
-                                    <li><a href="#"><img src="assets/images/flags/fr.png" alt="France flag">FRENCH</a></li>
+                                    <li><a href="#"><img src={{asset('images/flags/en.png')}} alt="England flag">ENGLISH</a></li>
+                                    <li><a href="#"><img src={{asset('images/flags/fr.png')}} alt="France flag">FRENCH</a></li>
                                 </ul>
                             </div><!-- End .header-menu -->
                         </div><!-- End .header-dropown -->
