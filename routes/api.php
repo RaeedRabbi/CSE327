@@ -23,3 +23,4 @@ Route::middleware('auth:api')->get('/userMiddleware', function (Request $request
 
 \Illuminate\Support\Facades\Route::get('/userinfo/{id}','ApiController@userinfobyID')->middleware('user');
 
+
