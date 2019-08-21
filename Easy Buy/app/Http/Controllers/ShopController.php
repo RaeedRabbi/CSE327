@@ -17,6 +17,7 @@ class ShopController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    //returns 18 products per page
     public function index()
     {
         $products=Product::inRandomOrder()->paginate(18);
@@ -24,6 +25,7 @@ class ShopController extends Controller
     }
 
     
+    //showing a single product
     public function show($id)
     {
         $product=Product::find($id);
