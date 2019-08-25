@@ -16,7 +16,9 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="cart-table-container">
+
                         @if($numOfItems>0)
+                        @if($products->count()>0)
                         <table class="table table-cart">
                             <thead>
                                 <tr>
@@ -49,6 +51,23 @@
                                         </form>
                                         </td>
                                         <td>{{$product->getTotalPrice()}}</td>
+                                                <a href="/shop/{{$product->id}}" class="product-image">
+                                                    <img src="{{asset('images/products/product-'.$product->id.'.jpg')}}" alt="product">
+                                                </a>
+                                            </figure>
+                                            <h2 class="product-title">
+                                                <a href="/shop/{{$product->id}}">{{$product->name}}</a>
+                                            </h2>
+                                        </td>
+                                        <td>{{$product->pivot->price}}</td>
+                                        <td>
+                                        <form action="/cart/{{$product->pivot->id}}/update" method="post">
+                                            @csrf
+                                            <input class="vertical-quantity form-control" type="number" name="quantity" value={{$product->pivot->quatity}}>
+                                            <button type="submit"> submit </button>
+                                        </form>
+                                        </td>
+                                        <td>{{$product->pivot->total_price}}</td>
                                     </tr>
                                     <tr class="product-action-row">
                                         <td colspan="4" class="clearfix">
@@ -59,6 +78,7 @@
                                             <div class="float-right row">
                                                 <a href="#" title="Edit product" class="btn-edit"><span class="sr-only">Edit</span><i class="icon-pencil"></i></a>
                                                 <form action="/cart/{{$product->item['id']}}/delete" method="post">
+                                                <form action="/cart/{{$product->id}}/delete" method="post">
                                                     @method('DELETE')
                                                     @csrf
                                                     <button class="close" type="submit">

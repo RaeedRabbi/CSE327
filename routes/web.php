@@ -36,4 +36,7 @@ Route::middleware(['auth'])->group(function(){
     Route::post('/cart/{product}/update', 'CartController@update')->name('cart.update');
     Route::delete('/cart', 'CartController@clearCart')->name('cart.clear');
 
+    Route::get('/admin/product', 'ProductController@index')->middleware('admin');
+    Route::delete('/admin/product/{product}/delete', 'ProductController@destroy')->middleware('admin');
+
 });

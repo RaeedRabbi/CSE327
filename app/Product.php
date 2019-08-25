@@ -19,11 +19,13 @@ class Product extends Model
     //category relationship
     public function categories(){
         return $this->belongsTo('App\Category');
+        return $this->belongsTo('App\Category','category_id');
     }
 
     //subcategory relationship
     public function sub_categories(){
             return $this->belongsTo('App\SubCategory');
+            return $this->belongsTo('App\SubCategory', 'sub_category_id');
     }
 
     //review relatioship
