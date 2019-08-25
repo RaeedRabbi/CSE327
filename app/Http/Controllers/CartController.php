@@ -8,6 +8,10 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\User;
 use App\Product;
+
+use App\Item;
+use App\cartSession;
+use Session;
 use Auth;
 
 class CartController extends Controller
@@ -17,6 +21,9 @@ class CartController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function index(Request $request)
+    {
+        /*$products=User::find(Auth::user()->id)->cartProducts()->paginate(5);
     public function index()
     {
         $products=User::find(Auth::user()->id)->cartProducts()->paginate(5);
@@ -24,6 +31,29 @@ class CartController extends Controller
         return view('pages.cart')->with([
             'products' => $products,
  
+            ]);*/
+        $cart= new cartSession;
+        if(Session::has('cart'))
+        {
+            $cart=(Session::get('cart'));
+            $items=$cart->getitems();
+            $products=$items;
+            $numOfItems=$cart->numOfItems();
+            return view('pages.cart')->with([
+                'products' => $products,
+                'numOfItems' => $numOfItems
+                ]);
+        }
+        else
+        {
+            $cart=null;
+            dd($cart);
+        }
+        
+        
+        //$request->session()->flush();
+        //dd($products);
+        
             ]);
     }
 
@@ -36,6 +66,7 @@ class CartController extends Controller
      */
     public function store(Request $request, $id)
     {
+        /*$now = Carbon::now()->toDateTimeString();
         $now = Carbon::now()->toDateTimeString();
         $user_id=Auth::user()->id;
         //$id = request()->id;
@@ -69,6 +100,31 @@ class CartController extends Controller
             'created_at' => $now
         ]);
         
+        return redirect()->back()->with('success', 'Added to Cart');*/
+        $product = Product::find($id)->toArray();
+        $price=$product['present_price'];
+        if($request->input('quantity'))
+        {
+            $quantity=$request->input('quantity');
+        }
+        else{
+            $quantity=1;
+        }
+        $item=new Item($quantity, $price, $product);
+        
+        $cart=new cartSession;
+        $oldCart=Session::has('cart') ? Session::get('cart') : $cart;
+        $cart=$oldCart;
+        $cart->add($item);
+        //dd($cart->totalPrice());
+        
+        $request->session()->put('cart',$cart);
+        
+        return redirect()->back()->with('success', 'Added to Cart');
+
+    }
+
+
         return redirect()->back()->with('success', 'Added to Cart');
     }
 
