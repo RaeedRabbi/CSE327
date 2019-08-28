@@ -63,6 +63,17 @@
                     <li class="float-right"><a href="/blog">Blog</a></li>
                     <li class="float-right"><a href="/contact">Contact</a></li>
                     <li class="float-right"><a href="/about">About Us</a></li>
+                    @auth
+                    @if (Auth::user()->id_user_role == 1)
+                    <li>
+                        <a href="/admin/productmanager" class="sf-with-ul">Admin Panel</a>
+                        <ul>
+                            <li><a href="/admin/productmanager"> Products List </a></li>
+                            <li><a href="admin/productmanager/create"> Add Product </a></li>
+                        </ul>
+                    </li>
+                    @endif
+                    @endauth
                 </ul>
             </nav>
         </div><!-- End .header-bottom -->
