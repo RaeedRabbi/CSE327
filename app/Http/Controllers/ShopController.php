@@ -53,7 +53,7 @@ class ShopController extends Controller
         {
             if($checker==Auth::user()->id)
             {
-                return redirect()->back()->with('error', 'Already exist a review of yours');
+                return redirect()->back()->with('error', 'Already exist a review of yours'); //error
             }
         }
         
