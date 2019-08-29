@@ -32,7 +32,7 @@
                         <ul>
                             <li><a href="/dashboard">MY ACCOUNT </a></li>
                             <li><a href="#">DAILY DEAL</a></li>
-                            <li><a href="#">MY WISHLIST </a></li>
+                            <li><a href="/wishlist">MY WISHLIST </a></li>
                             <li><a href="blog.html">BLOG</a></li>
                             <li><a href="contact.html">Contact</a></li>
                             @guest
