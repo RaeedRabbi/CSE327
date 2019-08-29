@@ -66,30 +66,34 @@ class ProductController extends Controller
         if($request->input('color1')){
             $color1=new Color;
             $color1->color = $request->input('color1');
-            $color1->product()->associate($color1);
+            $color1->save();
+            //$product->colors()->save($color1);
         }
         if($request->input('color2')){
             $color2=new Color;
             $color2->color = $request->input('color2');
-            $color2->product()->associate($color2);
+            $color2->save();
+            //$product->colors()->save($color2);
         }
         if($request->input('color2')){
             $color3=new Color;
             $color3->color = $request->input('color3');
-            $color3->product()->associate($color3);
+            $color3->save();
+            //$product->colors()->save($color3);
         }
         if($request->input('color4')){
             $color4=new Color;
             $color4->color = $request->input('color4');
-            $color4->product()->associate($color4);
+            //$product->colors()->save($color4);
         }
         $product->created_at = $now;
 
         if( $product->save())
         {
-            return redirect('admin/productmanager')->with('success', 'Product Uploaded');
+            $product->colors()->saveMany([$color1,$color2,$color3,$color4]);
+            return redirect('admin.products')->with('success', 'Product Uploaded');
         }
-        return redirect('admin/productmanager')->with('error', 'Error in uplaoding!!');
+        return redirect('admin.products')->with('error', 'Error in uplaoding!!');
     }
 
     /**
