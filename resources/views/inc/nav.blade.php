@@ -69,7 +69,7 @@
                         <a href="/admin/productmanager" class="sf-with-ul">Admin Panel</a>
                         <ul>
                             <li><a href="/admin/productmanager"> Products List </a></li>
-                            <li><a href="admin/productmanager/create"> Add Product </a></li>
+                            <li><a href="/admin/productmanager/create"> Add Product </a></li>
                         </ul>
                     </li>
                     @endif

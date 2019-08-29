@@ -6,8 +6,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use App\User;
 use App\Product;
+use App\Item;
+use App\cartSession;
+use Session;
 use Auth;
 
 class CartController extends Controller
@@ -17,14 +19,35 @@ class CartController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products=User::find(Auth::user()->id)->cartProducts()->paginate(5);
-        //$totalPrices=$products->pivot->total_price::with($products);
-        return view('pages.cart')->with([
-            'products' => $products,
- 
-            ]);
+        $cart= new cartSession;
+        if(Session::has('cart'))
+        {
+            $cart=(Session::get('cart'));
+            $items=$cart->getitems();
+            $totalPrice=$cart->totalPrice();
+            $products=$items;
+            $numOfItems=$cart->numOfItems();
+            
+            return view('pages.cart')->with([
+                'products' => $products,
+                'numOfItems' => $numOfItems,
+                
+                ]);
+        }
+        else
+        {
+            $products=null;
+            $numOfItems = 0;
+            return view('pages.cart')->with([
+                'products' => $products,
+                'numOfItems' => $numOfItems
+                ]);
+        }
+        
+
+        
     }
 
 
@@ -36,11 +59,12 @@ class CartController extends Controller
      */
     public function store(Request $request, $id)
     {
-        $now = Carbon::now()->toDateTimeString();
-        $user_id=Auth::user()->id;
-        //$id = request()->id;
-        $product = Product::find($id);
-        $price=$product->present_price;
+      
+        $product = Product::find($id)->toArray();
+        $id=Product::find($id,['id']);
+        $stock=$product['quantity'];
+       
+
         if($request->input('quantity'))
         {
             $quantity=$request->input('quantity');
@@ -48,42 +72,38 @@ class CartController extends Controller
         else{
             $quantity=1;
         }
-        $totalPrice = $price*$quantity;
-
-        $products=User::find($user_id)->cartProducts()->pluck('product_id');
-        //checking if already is in the list
-        foreach($products as $product)
-        {
-            if($product == $id)
-            {
-                return redirect()->back()->with('error', 'Already exist in Cart');
-            }  
+        $price=$product['present_price'];
+        $newitem=new Item($id, $quantity, $price, $product);
+        
+        $cart=new cartSession;
+        $oldCart=Session::has('cart') ? Session::get('cart') : $cart;
+        $cart=$oldCart;
+        
+        $items=$cart->getitems();
+        if($stock >= $quantity){
+            for($i = 0; $i < $cart->numOfItems(); $i++)
+            {   
+                if (array_key_exists($i, $items)) {
+                    if($items[$i]->getId()==$newitem->getId()){
+                        return redirect()->back()->with('error', 'exists');
+                    }
+                }else{
+                    continue;
+                }
+            }
+              
+        }else{
+            return redirect()->back()->with('error', 'out of stock');
         }
-      
-        $user= new User();
-        $user->cartProducts()->attach($id,[
-            'user_id' => $user_id,
-            'quatity' => $quantity,
-            'price' => $price,
-            'total_price' => $totalPrice,
-            'created_at' => $now
-        ]);
+        
+        $cart->add($newitem,$id);   
+        $request->session()->put('cart',$cart);
         
         return redirect()->back()->with('success', 'Added to Cart');
+
     }
 
     
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -94,17 +114,23 @@ class CartController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $now = Carbon::now()->toDateTimeString();
-        $price = DB::table('carts')->find($id)->price;
+    
+        $product=Product::find($id)->toArray();
+        $id=Product::find($id,['id']);
+        $stock=$product['quantity'];
         $quantity = $request->input('quantity');
-        $subtotal = $quantity*$price;
-        DB::table('carts')
-            ->where('id', $id)
-            ->update([
-            'quatity' => $quantity,
-            'total_price' => $subtotal,
-            'updated_at' => $now
-        ]);
+        if($stock < $quantity)
+        {
+            return redirect()->back()->with('error', 'out of stock');
+        }
+        //dd($quantity);
+        $cart=new cartSession;
+        $oldCart=Session::has('cart') ? Session::get('cart') : $cart;
+        $cart=$oldCart;
+        $cart->update($id, $quantity);
+        
+        $request->session()->put('cart',$cart);
+        //dd($cart);
         return redirect()->back()->with('success', 'Updated');
     }
 
@@ -114,16 +140,48 @@ class CartController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        $user_id=Auth::user()->id;
-        $product=User::find($user_id)->cartProducts()->detach($id);
-        return redirect()->back()->with('success', 'Removed from cart');
+        $cart=new cartSession;
+        $oldCart=Session::has('cart') ? Session::get('cart') : $cart;
+        $cart=$oldCart;
+        $product=Product::find($id)->toArray();
+        $price=$product['present_price'];
+        $items=$cart->getitems();
+        
+       
+        for($i = 0; $i < $cart->numOfItems(); $i++)
+        {
+            
+           
+            if (array_key_exists($i, $items)) {
+                if($items[$i]->getItem()==$product){
+                    
+                    array_splice($items, $i, 1);
+                    $cart->numOfItems--;
+                    break;
+                }
+            }else{
+                dd("hellow");
+                continue;
+            }
+            
+        }
+
+        if($cart->numOfItems==0){
+            Session::forget('cart');
+            return redirect()->back()->with('success', 'Cart is cleared');
+        }
+
+        $cart->setitems($items);
+        $request->session()->put('cart',$cart);
+        return redirect()->back()->with('success', 'Product is been removed');
+        
     }
 
-    public function clearCart(){
-        $user_id=Auth::user()->id;
-        $products=User::find($user_id)->cartProducts()->detach();
-        return redirect()->back()->with('success', 'All Removed from cart');
+   
+    public function clearCart(Request $request){
+        Session::forget('cart');
+        return redirect()->back()->with('success', 'Cart cleared');
     }
 }

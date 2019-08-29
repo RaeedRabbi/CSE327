@@ -16,7 +16,7 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="cart-table-container">
-                        @if($products->count()>0)
+                        @if($numOfItems > 0)
                         <table class="table table-cart">
                             <thead>
                                 <tr>
@@ -29,45 +29,47 @@
                             <tbody>
                                 
                                 @foreach ($products as $product)
+                               
                                 <tr class="product-row">
-                                        <td class="product-col">
-                                            <figure class="product-image-container">
-                                                <a href="/shop/{{$product->id}}" class="product-image">
-                                                    <img src="{{asset('images/products/product-'.$product->id.'.jpg')}}" alt="product">
-                                                </a>
-                                            </figure>
-                                            <h2 class="product-title">
-                                                <a href="/shop/{{$product->id}}">{{$product->name}}</a>
-                                            </h2>
-                                        </td>
-                                        <td>{{$product->pivot->price}}</td>
-                                        <td>
-                                        <form action="/cart/{{$product->pivot->id}}/update" method="post">
-                                            @csrf
-                                            <input class="vertical-quantity form-control" type="number" name="quantity" value={{$product->pivot->quatity}}>
-                                            <button type="submit"> submit </button>
-                                        </form>
-                                        </td>
-                                        <td>{{$product->pivot->total_price}}</td>
-                                    </tr>
-                                    <tr class="product-action-row">
-                                        <td colspan="4" class="clearfix">
-                                            <div class="float-left">
-                                                <a href="#" class="btn-move">Move to Wishlist</a>
-                                            </div><!-- End .float-left -->
-                                            
-                                            <div class="float-right row">
-                                                <a href="#" title="Edit product" class="btn-edit"><span class="sr-only">Edit</span><i class="icon-pencil"></i></a>
-                                                <form action="/cart/{{$product->id}}/delete" method="post">
-                                                    @method('DELETE')
-                                                    @csrf
-                                                    <button class="close" type="submit">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </form>
-                                            </div><!-- End .float-right -->
-                                        </td>
-                                    </tr>
+                                    <td class="product-col">
+                                        <figure class="product-image-container">
+                                            <a href="/shop/{{$product->getItem()['id']}}" class="product-image">
+                                                <img src="{{asset('images/products/product-'.$product->getItem()['id'].'.jpg')}}" alt="product">
+                                            </a>
+                                        </figure>
+                                        <h2 class="product-title">
+                                            <a href="/shop/{{$product->getItem()['id']}}">{{$product->getItem()['name']}}</a>
+                                        </h2>
+                                    </td>
+                                    <td>{{$product->getPrice()}}</td>
+                                    <td>
+                                    <form action="/cart/{{$product->getItem()['id']}}/update" method="post">
+                                        @csrf
+                                        <input class="vertical-quantity form-control" type="number" name="quantity" value={{$product->getQty()}}>
+                                        <button type="submit"> submit </button>
+                                    </form>
+                                    </td>
+                                    <td>{{$product->subtotalPrice()}}</td>
+                                </tr>
+                                <tr class="product-action-row">
+                                    <td colspan="4" class="clearfix">
+                                        <div class="float-left">
+                                            <a href="#" class="btn-move">Move to Wishlist</a>
+                                        </div><!-- End .float-left -->
+                                        
+                                        <div class="float-right row">
+                                            <a href="#" title="Edit product" class="btn-edit"><span class="sr-only">Edit</span><i class="icon-pencil"></i></a>
+                                            <form action="/cart/{{$product->getItem()['id']}}/delete" method="post">
+                                                @method('DELETE')
+                                                @csrf
+                                                <button class="close" type="submit">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </form>
+                                        </div><!-- End .float-right -->
+                                    </td>
+                                </tr>
+                                
                                 @endforeach
                             </tbody>
 
@@ -181,18 +183,14 @@
                             <tbody>
                                 <tr>
                                     <td>Subtotal</td>
-                                    <td>$17.90</td>
+                                    <td></td>
                                 </tr>
 
-                                <tr>
-                                    <td>Tax</td>
-                                    <td>$0.00</td>
-                                </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <td>Order Total</td>
-                                    <td>$17.90</td>
+                                    <td>$ </td>
                                 </tr>
                             </tfoot>
                         </table>

@@ -29,13 +29,13 @@
 <div class="form-group">
   <label class="col-md-4 control-label" for="product_categorie">PRODUCT CATEGORY</label>
   <div class="col-md-4">
-      @if (App\Category::all()->count()>0)
-        @foreach (Category::all() as $category)
+    
+        
         <select id="product_categorie" name="product_categorie" class="form-control">
-        {{$category->name}}
+        
         </select>
-        @endforeach
-      @endif
+        
+      
     <select id="product_categorie" name="product_categorie" class="form-control">
     </select>
   </div>
